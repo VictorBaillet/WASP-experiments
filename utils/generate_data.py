@@ -7,6 +7,7 @@ from sklearn.utils import check_random_state
 import pickle
 import os
 
+
 def gen_data(mu_list={'1': np.array([1, 2]), '2': np.array([7, 8])},
              sig_mat_list={'1': np.array([[1, 0.5], [0.5, 2]]),
                           '2': np.array([[1, 0.5], [0.5, 2]])},
