@@ -1,20 +1,13 @@
 general:
-    name: "Paper's gaussian experiment"
-    folder_name: "paper_exp_gaussian"
+    name: "Paper's logistic regression"
+    folder_name: "paper_exp_logistic"
     seed: 12345
     
 model:
-    type: "Gaussian mixture"
-    labels: ['1', '2']
-    gaussian_1:
-        mu: [1, 2]
-        sigma: [[1, 0.5], [0.5, 2]]
-
-    gaussian_2:
-        mu: [7, 8]
-        sigma: [[1, 0.5], [0.5, 2]]
-
-    pi: [0.3, 0.7]
+    type: "Logistic"
+    weights: [1.5, -2.0]
+    bias: 0.5
+    noise_std: 0.1
 
 n_rep: 1
 n_observations: 10000
