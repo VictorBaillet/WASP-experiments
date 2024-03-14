@@ -46,6 +46,10 @@ def process_results(config_file, proj, npart, data_path='data'):
     results_folder = os.path.join(folder_path, 'results')
     file_path_sol = os.path.join(results_folder, f'xsol_k{npart}.pkl')
     file_path_support = os.path.join(results_folder, f'support_k{npart}.pkl')
+    image_path = os.path.join('results', config['general']['folder_name'])
+
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
 
     ## Load data
     with open(file_path_sol, 'rb') as file:
@@ -82,6 +86,7 @@ def process_results(config_file, proj, npart, data_path='data'):
     plt.xlabel('$\sigma_1$')
     plt.ylabel('$\sigma_2$')
     plt.plot()
+    plt.savefig(os.path.join(image_path, 'inferred_samples.png'))
 
     # Second plot 
     plt.figure(figsize=(8, 6))
@@ -90,6 +95,7 @@ def process_results(config_file, proj, npart, data_path='data'):
     plt.xlabel('$\sigma_1$')
     plt.ylabel('$\sigma_2$')
     plt.plot()
+    plt.savefig(os.path.join(image_path, 'barycenter_distribution.png'))
     
     # Third plot
     plt.figure(figsize=(8, 6))
@@ -130,7 +136,8 @@ def process_results(config_file, proj, npart, data_path='data'):
     plt.title('Equidensity Levels')
     plt.xlabel('$\sigma_1$')
     plt.ylabel('$\sigma_2$')
-    plt.plot();
+    plt.plot()
+    plt.savefig(os.path.join(image_path, 'equidenity_level_lines.png'))
 
     output = {'folder path': folder_path, 'input folder': input_folder, 'sampling folder': sampling_folder,
               'results folder': results_folder, 'file path solution': file_path_sol, 'file path support': file_path_support,
