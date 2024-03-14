@@ -10,8 +10,8 @@ model:
     noise_std: 0.1
 
 n_rep: 1
-n_observations: 10000
+n_observations: 100
 subsets:
-    n_subset: [5, 10]
+    n_subset: [5]
     subset_generation_method: "kmeans"
     n_clusters: 3 

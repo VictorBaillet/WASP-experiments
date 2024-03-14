@@ -102,7 +102,7 @@ def wasp_logistic(data_mat, ncomp=2, nrep=10, niter=10000, nburn=5000, nthin=5):
         trace = pm.sample(niter, tune=nburn, target_accept=0.95, chains=1)
     
     return {
-        'weights': trace.posterior['weights'].values[0],
+        'weights': trace.posterior['weights'].values[0]/np.linalg.norm(trace.posterior['weights'].values[0], axis=1)[:,None],
         'bias': trace.posterior['bias'].values[0],
     }
     

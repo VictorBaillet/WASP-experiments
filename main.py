@@ -12,7 +12,6 @@ from utils.general_utils import *
 
 def run_experiment(config, parameter_projector, generate_data=True, options=None, data_path="data"):
     print("Running experiment : ", config['general']['name'])
-
     ## Setup
     np.random.seed(config['general']['seed'])
     folder_path = os.path.join(data_path, config['general']['folder_name'])
@@ -63,16 +62,15 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             pd.to_pickle(parts, os.path.join(input_folder, f"subset_k{npart}.pkl"))
     
         if config['model']['type'] == "Gaussian mixture":
-            sampling = lambda x: mvn_wasp_mix(x)
+            sampling = lambda x, nrep: mvn_wasp_mix(x, nrep=nrep)
         elif config['model']['type'] == "Logistic":
-            sampling = lambda x: wasp_logistic(x)
+            sampling = lambda x, nrep: wasp_logistic(x, nrep=nrep)
         else:
             raise ValueError("Unsupported model type: {}".format(config['model']['type']))
         
-        full_data_sampling = sampling(np.array(reps[0]['data'])) ## Full data
         ## Sampling
         # Full data
-        full_data_sampling = mvn_wasp_mix(np.array(reps[0]['data']), nrep=1)
+        full_data_sampling = sampling(np.array(reps[0]['data']), nrep=1)
         filename = os.path.join(sampling_folder, f"full_dataset.pkl")
         with open(filename, 'wb') as file: 
             pickle.dump(full_data_sampling, file)
@@ -85,7 +83,7 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             x_res = []
             for i, cluster in enumerate(parts[0][0]):
                 cluster = np.array(cluster)
-                x_res.append(mvn_wasp_mix(cluster, nrep=npart))
+                x_res.append(sampling(cluster, nrep=npart))
     
         ## Save sampling
         for i, res in enumerate(x_res):
@@ -138,6 +136,10 @@ if __name__=='__main__':
         
             # Combine the results
             return np.stack((corr1, corr2), axis=-1)
+
+    if proj == 'identity_log':
+        def f(m):
+            return m['weights']
 
     run_experiment(config, parameter_projector=f, generate_data=(args.generate_data=="True"))
 

@@ -31,6 +31,10 @@ def process_results(config_file, proj, npart, data_path='data'):
         
             # Combine the results
             return np.stack((corr1, corr2), axis=-1)
+    if proj == 'identity_log':
+        def f(m):
+            return m['weights']
+            
     ## Setup paths
     config_path = os.path.join('config', config_file)
     with open(config_path) as file:
