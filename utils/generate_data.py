@@ -22,6 +22,16 @@ def gen_data(mu_list={'1': np.array([1, 2]), '2': np.array([7, 8])},
         previous_idx = previous_idx + size
     return pd.DataFrame(data, columns=['X1', 'X2']), clusters
 
+def gen_data_logistic(weights=np.array([1.5, -2.0]), bias=0.5, nobs=1000, noise_std=0.1):
+    n_features = len(weights)
+    X = np.random.randn(nobs, n_features)
+    linear_combination = X.dot(weights) + bias + np.random.normal(0, noise_std, nobs)
+    probabilities = 1 / (1 + np.exp(-linear_combination))
+    y = (probabilities >= 0.5).astype(int)
+    data = np.concatenate((X,y.reshape(-1, 1)), axis = 1)
+    return pd.DataFrame(data, columns=['X1', 'X2', 'Y'])
+
+
 def partition_data(reps, npart, nclust, random_state=12345):
     """
     Partition the data based on k-means clustering and random assignment within clusters.
