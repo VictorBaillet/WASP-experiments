@@ -34,12 +34,13 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
                 param = config['model'][f'gaussian_{label}']
                 mu_list[label] = param['mu']
                 sig_mat_list[label] = param['sigma']
+            pi = config['model']['pi']
                 
             nrep = config['n_rep']
             reps = []
             nobs = config['n_observations']
             for r in range(nrep):
-                data, clusters = gen_data(nobs=nobs)
+                data, clusters = gen_data(nobs=nobs, mu_list=mu_list, sig_mat_list=sig_mat_list, probs=pi)
                 reps.append({'data': data, 'clusters': clusters})
         if config['model']['type'] == "Logistic":
             weights = config['model']['weights']

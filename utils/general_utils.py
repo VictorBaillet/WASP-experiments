@@ -9,7 +9,7 @@ from scipy.ndimage import gaussian_filter
 import pickle
 import os
     
-def process_results(config_file, proj, npart, data_path='data'):
+def process_results(config_file, proj, npart, axis, data_path='data'):
     ## Define the projection function of the parameters
     if proj == 'mean_sum':
         f = lambda m: m['mu'][:, 0].reshape(m['mu'].shape[0], -1) + m['mu'][:, 1].reshape(m['mu'].shape[0], -1)
@@ -46,7 +46,7 @@ def process_results(config_file, proj, npart, data_path='data'):
     results_folder = os.path.join(folder_path, 'results')
     file_path_sol = os.path.join(results_folder, f'xsol_k{npart}.pkl')
     file_path_support = os.path.join(results_folder, f'support_k{npart}.pkl')
-    image_path = os.path.join('results', config['general']['folder_name'])
+    image_path = os.path.join(os.path.join('results', config['general']['folder_name']), f'{npart}k')
 
     if not os.path.exists(image_path):
         os.makedirs(image_path)
@@ -83,8 +83,8 @@ def process_results(config_file, proj, npart, data_path='data'):
     full_data_patch = mpatches.Patch(color='#ffaba9', label='Full dataset')
     plt.legend(handles=[subset_patch, full_data_patch])
     plt.title('Samples inferred from the full dataset vs subsets') 
-    plt.xlabel('$\sigma_1$')
-    plt.ylabel('$\sigma_2$')
+    plt.xlabel(axis[0])
+    plt.ylabel(axis[1])
     plt.plot()
     plt.savefig(os.path.join(image_path, 'inferred_samples.png'))
 
@@ -92,8 +92,8 @@ def process_results(config_file, proj, npart, data_path='data'):
     plt.figure(figsize=(8, 6))
     plt.scatter(overallPost[:, 0], overallPost[:, 1], c=xsol[:30*30])
     plt.title('Barycenter distribution and its support') 
-    plt.xlabel('$\sigma_1$')
-    plt.ylabel('$\sigma_2$')
+    plt.xlabel(axis[0])
+    plt.ylabel(axis[1])
     plt.plot()
     plt.savefig(os.path.join(image_path, 'barycenter_distribution.png'))
     
@@ -134,8 +134,8 @@ def process_results(config_file, proj, npart, data_path='data'):
     plt.legend(handles=[subset_patch, full_data_patch, barycenter_patch])
     
     plt.title('Equidensity Levels')
-    plt.xlabel('$\sigma_1$')
-    plt.ylabel('$\sigma_2$')
+    plt.xlabel(axis[0])
+    plt.ylabel(axis[1])
     plt.plot()
     plt.savefig(os.path.join(image_path, 'equidenity_level_lines.png'))
 

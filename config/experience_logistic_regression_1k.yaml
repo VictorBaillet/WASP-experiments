@@ -1,0 +1,17 @@
+general:
+    name: "Paper's logistic regression"
+    folder_name: "paper_exp_logistic_1k"
+    seed: 12345
+    
+model:
+    type: "Logistic"
+    weights: [1.5, -2.0]
+    bias: 0.5
+    noise_std: 5
+
+n_rep: 1
+n_observations: 1000
+subsets:
+    n_subset: [5]
+    subset_generation_method: "kmeans"
+    n_clusters: 3 

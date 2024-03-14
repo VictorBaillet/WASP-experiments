@@ -1,6 +1,6 @@
 general:
-    name: "Paper's gaussian experiment"
-    folder_name: "paper_exp_gaussian"
+    name: "Kmeans experiment"
+    folder_name: "kmeans_exp"
     seed: 12345
     
 model:
@@ -8,18 +8,18 @@ model:
     labels: ['1', '2']
     gaussian_1:
         mu: [0, 0]
-        sigma: [[5, 0], [0, 1]]
+        sigma: [[0.5, 0], [0, 10]]
 
     gaussian_2:
-        mu: [1, 0]
+        mu: [3, 3]
         sigma: [[0.5, 0], [0, 0.5]]
         
 
-    pi: [0.8, 0.2]
+    pi: [0.99, 0.01]
 
 n_rep: 1
 n_observations: 10000
 subsets:
-    n_subset: [5, 10]
+    n_subset: [5]
     subset_generation_method: "kmeans"
     n_clusters: 3 
