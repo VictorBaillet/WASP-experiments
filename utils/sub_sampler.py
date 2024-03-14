@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import pymc as pm
 from tqdm import tqdm
 
 def mvn_wasp_mix(data_mat, ncomp=2, nrep=10, niter=10000, nburn=5000, nthin=5):
@@ -80,3 +81,28 @@ def mvn_wasp_mix(data_mat, ncomp=2, nrep=10, niter=10000, nburn=5000, nthin=5):
         'cov': sig_mat_samp,
         'prob': probs_samp,
     }
+
+def wasp_logistic(data_mat, ncomp=2, nrep=10, niter=10000, nburn=5000, nthin=5):
+    X = data_mat[:, :2]
+    y = data_mat[:, 2:]
+
+    with pm.Model() as logistic_model:
+        # Priors
+        weights = pm.Normal('weights', mu=0, sigma=10, shape=X.shape[1])
+        bias = pm.Normal('bias', mu=0, sigma=10)
+        
+        # Linear model and logistic function
+        logits = pm.math.dot(X, weights) + bias
+        p = pm.math.sigmoid(logits)
+        
+        bernoulli_rv = pm.Bernoulli.dist(p=p)
+        observed = pm.Potential('observed', nrep * pm.logp(bernoulli_rv, y))
+    
+    with logistic_model:
+        trace = pm.sample(niter, tune=nburn, target_accept=0.95, chains=1)
+    
+    return {
+        'weights': trace.posterior['weights'].values[0],
+        'bias': trace.posterior['bias'].values[0],
+    }
+    

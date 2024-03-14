@@ -42,6 +42,17 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             for r in range(nrep):
                 data, clusters = gen_data(nobs=nobs)
                 reps.append({'data': data, 'clusters': clusters})
+        if config['model']['type'] == "Logistic":
+            weights = config['model']['weights']
+            bias = config['model']['bias']
+            noise_std = config['model']['noise_std']
+
+            nrep = config['n_rep']
+            reps = []
+            nobs = config['n_observations']
+            for r in range(nrep):
+                data = gen_data_logistic(weights=weights, bias=bias, nobs=nobs, noise_std=noise_std)
+                reps.append({'data': data})
     
         ## Save data and create subsets
         pd.to_pickle(reps, os.path.join(input_folder, "full_data.pkl"))
@@ -51,6 +62,14 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             parts = partition_data(reps, npart, nclust)
             pd.to_pickle(parts, os.path.join(input_folder, f"subset_k{npart}.pkl"))
     
+        if config['model']['type'] == "Gaussian mixture":
+            sampling = lambda x: mvn_wasp_mix(x)
+        elif config['model']['type'] == "Logistic":
+            sampling = lambda x: wasp_logistic(x)
+        else:
+            raise ValueError("Unsupported model type: {}".format(config['model']['type']))
+        
+        full_data_sampling = sampling(np.array(reps[0]['data'])) ## Full data
         ## Sampling
         # Full data
         full_data_sampling = mvn_wasp_mix(np.array(reps[0]['data']), nrep=1)
