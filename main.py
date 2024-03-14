@@ -52,16 +52,21 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             pd.to_pickle(parts, os.path.join(input_folder, f"subset_k{npart}.pkl"))
     
         ## Sampling
-        full_data_sampling = mvn_wasp_mix(np.array(reps[0]['data'])) ## Full data
-    
-        for npart in config['subsets']['n_subset']: ## Subsets
+        # Full data
+        full_data_sampling = mvn_wasp_mix(np.array(reps[0]['data']), nrep=1)
+        filename = os.path.join(sampling_folder, f"full_dataset.pkl")
+        with open(filename, 'wb') as file: 
+            pickle.dump(full_data_sampling, file)
+        
+        # Subsets
+        for npart in config['subsets']['n_subset']:
             part_path = os.path.join(input_folder, f"subset_k{npart}.pkl")
             # Read the saved file
             parts = pd.read_pickle(part_path)
             x_res = []
             for i, cluster in enumerate(parts[0][0]):
                 cluster = np.array(cluster)
-                x_res.append(mvn_wasp_mix(cluster))
+                x_res.append(mvn_wasp_mix(cluster, nrep=npart))
     
         ## Save sampling
         for i, res in enumerate(x_res):
@@ -78,6 +83,9 @@ def run_experiment(config, parameter_projector, generate_data=True, options=None
             pickle.dump(xsol, file)
         with open(file_path_support, "wb") as file:
             pickle.dump(overallPost, file)
+
+    ## Compute f over the full dataset and over the subsets
+    
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=('Scalable Bayes via Barycenter in Wasserstein Space'))
