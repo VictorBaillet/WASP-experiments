@@ -8,7 +8,8 @@ import pickle
 import os
 
 def gen_data(mu_list={'1': np.array([1, 2]), '2': np.array([7, 8])},
-             sig_mat=np.array([[1, 0.5], [0.5, 2]]),
+             sig_mat_list={'1': np.array([[1, 0.5], [0.5, 2]]),
+                          '2': np.array([[1, 0.5], [0.5, 2]])},
              probs=np.array([0.3, 0.7]),
              nobs=1000):
     data = np.zeros((nobs, 2))
@@ -16,7 +17,7 @@ def gen_data(mu_list={'1': np.array([1, 2]), '2': np.array([7, 8])},
     previous_idx = 0
     for i, (label, mu) in enumerate(mu_list.items()):
         size = int(nobs * probs[i])
-        data[previous_idx: previous_idx + size, :] = multivariate_normal.rvs(mean=mu, cov=sig_mat, size=size)
+        data[previous_idx: previous_idx + size, :] = multivariate_normal.rvs(mean=mu, cov=sig_mat_list[label], size=size)
         clusters[previous_idx:previous_idx +size] = i
         previous_idx = previous_idx + size
     return pd.DataFrame(data, columns=['X1', 'X2']), clusters

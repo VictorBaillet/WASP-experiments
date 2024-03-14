@@ -37,18 +37,19 @@ def call_lp_solver(A_eq, b_eq, cvec, bounds, maxiters=10000, solver='highs'):
 
     return xsol, output
 
-def read_pickle_files(dd, nsub, ndim, base_path='data/sub-sampling'):
+def read_pickle_files(exp_name, nsub, f, base_path='data'):
     """Read pickle files corresponding to the data."""
-    chr = 'mu1' if ndim == 1 else 'mu2'
     margMat = []
+    folder_path = os.path.join(os.path.join(base_path, exp_name), 'sub-sampling')
     for kk in range(1, nsub + 1):
         file_name = f"sample_{kk-1}.pkl" 
-        file_path = os.path.join(base_path, file_name)
+        file_path = os.path.join(folder_path, file_name)
         with open(file_path, 'rb') as file:  
             margMat.append(pickle.load(file))
-    return transform_dict_to_array(margMat)
+    #return transform_dict_to_array(margMat)
+    return np.array([f(m) for m in margMat])
 
-def calculate_distances(margMat, nsub):
+def calculate_distances(margMat):
     """Calculate the pairwise squared Euclidean distances."""
     subsetPost = np.array([m[np.random.randint(0, len(m), 100), :] for m in margMat])
     lbd1, ubd1 = min(m[:, 0].min() for m in subsetPost), max(m[:, 0].max() for m in subsetPost)
@@ -71,6 +72,13 @@ def transform_dict_to_array(margMat):
         ], axis=1)
         """
         transformed_data.append(flattened_data)
+    
+    return np.array(transformed_data)
+
+def compute_f(margMat, f):
+    transformed_data = []
+    for m in margMat:
+        transformed_data.append(f(m))
     
     return np.array(transformed_data)
 
@@ -122,10 +130,10 @@ def setup_lp_problem(D):
     
     return A_eq, b_eq, c
 
-def main(dd, nsub, ndim):
+def main(exp_name, nsub, f):
     ## Setup
-    margMat = read_pickle_files(dd, nsub, ndim)
-    overallPost, distMatCell, subsetPost = calculate_distances(margMat, nsub)
+    margMat = read_pickle_files(exp_name, nsub, f)
+    overallPost, distMatCell, subsetPost = calculate_distances(margMat)
     A_ub, b_ub, cvec = setup_lp_problem(distMatCell)
         
     ## Solve the LP problem
