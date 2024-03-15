@@ -1,6 +1,6 @@
 # WASP Experiments Repository
 
-This repository contains code and experiments related to bayesian inferrence for tall datasets. It builds upon the methodology introduced in "Scalable Bayes via Barycenter in Wasserstein Space" by Srivastava et al., 2017.
+This repository contains code and experiments related to bayesian inferrence for tall datasets. It builds upon the methodology introduced in "Scalable Bayes via Barycenter in Wasserstein Space" by Srivastava et al. in 2017.
 
 ## Table of Contents
 
